@@ -1,7 +1,9 @@
-__pycache__ / 
+test/
 node_modules/
 package-lock.json
 credentials.js
 config.json 
 video/
 .env
+src/media
+ 
