@@ -11,10 +11,9 @@ export async function getCategoryTotalPostsNumber(category: string) {
 
 export async function getPagePosts(category: string, startIndex: number) {
     const [rows] = await connection.promise().query(`
-        SELECT P.title,P.id,P.created_at, U.username, F.filename, 
-        F.id as fileId,P.category
+        SELECT P.title,P.id,P.created_at, P.category, P.copyright_holder as username
+        F.filename, F.id as fileId
         FROM Post P 
-        LEFT JOIN User U ON U.id = P.user_id
         LEFT JOIN File F ON F.post_id = P.id
         WHERE P.category = '${category}'
         ORDER BY created_at ASC;
@@ -26,36 +25,39 @@ export async function getPagePosts(category: string, startIndex: number) {
 export async function getPostById(id: number) {
     const [post] = await connection.promise().query(`
         SELECT P.title,P.content,P.created_at,P.updated_at,P.views,
-            U.username,U.userid,
-            F.id AS fileid,F.filename 
-            FROM Post P 
-            LEFT OUTER JOIN File F ON F.post_id = P.id 
-            LEFT JOIN User U ON P.user_id = U.id
-            WHERE P.id = ${id};
+        P.copyright_holder as username,U.userid,
+        F.id AS fileid,F.filename 
+        FROM Post P 
+        LEFT OUTER JOIN File F ON F.post_id = P.id 
+        LEFT JOIN User U ON P.owner_id = U.id
+        WHERE P.id = ${id};
         `);
-    return post;
+    return post[0];
 }
 
-export async function updateViews(id: number, userid: number) {
+export async function updateViews(postId: number) {
     await connection.promise().query(`
         UPDATE Post 
         SET views = views + 1 
-        WHERE id = ${id} AND user_id <> ${userid};
+        WHERE id = ${postId};
         `);
 }
 
 // 포스트 타이틀, 컨텐트
-export async function uploadPost(title: string, content: string, ownerId: number, category: string) {
-    const [post] = await connection.promise().query(`
-    INSERT INTO Post (title,content,created_at,updated_at,user_id,category) 
-    VALUES ('${title}','${content}',NOW(),NOW(),'${ownerId}','${category}');
+export async function uploadPost( ownerId: number,copyrightHolder:string, title: string, content: string, category: string) {
+    const [post]: any = await connection.promise().query(`
+        INSERT INTO Post (title,copyright_holder,content,created_at,updated_at,owner_id,category) 
+        VALUES ('${title}','${copyrightHolder}','${content}',NOW(),NOW(),'${ownerId}','${category}');
     `);
-    return post[0].insertId;
+    return post.insertId;
 }
 
 // pdf 업로드
-export async function uploadPdf() {
-
+export async function uploadPdf(filename:string,url:string,ownerId:number,postId:number,awsKey:string) {
+    await connection.promise().query(`
+    INSERT INTO File (filename,url,owner_id,post_id,awsKey) 
+    VALUES ('${filename}','${url}','${ownerId}','${postId}','${awsKey}');
+    `);
 }
 
 // 이미지 업로드
