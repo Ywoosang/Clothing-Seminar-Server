@@ -1,22 +1,29 @@
 #!/bin/bash
 
-echo '컨테이너 확인'
+echo '✨ check container process.. 🤔'
 PROC_ID=$(docker ps | grep clothingdb)
 if [ -n "${PROC_ID}" ];
 then
- echo '컨테이너 종료'
+ echo '✨ stop container clothingdb.. 🐳'
  docker stop clothingdb
  docker rm clothingdb
+ echo '✨ conatiner process down ✅'
 else
- echo "존재하지 않는 컨테이너"
+ echo "✨ container clothingdb not exist"
 fi
-echo 'Docker Build Starting..'
+echo '✨ docker build starting.. 🐳'
 docker build -t clothing .
-echo 'Build Success'
-echo 'Docker Container Starting..'
+echo '✨ build success ✅'
+echo '✨ container starting.. 🐳'
 docker run -d --name clothingdb -e MYSQL_ROOT_PASSWORD=db11 \
 -p 3306:3306 --restart=always \
 clothing --character-set-server=utf8 \
 --collation-server=utf8_unicode_ci
-echo 'clothingdb Container Started' 
-docker exec -it clothingdb bash 
+echo '✨ mysql process starting.. 👻'
+sleep 10s 
+echo '✨ exec setup.sql.. 😶' 
+docker exec -i clothingdb sh -c 'exec mysql -uroot -p"db11"' <  ./setup.sql
+echo '✨ sql script applied successfully ✅' 
+echo '✨ open bash script 🖥'
+docker exec -it clothingdb bash
+
