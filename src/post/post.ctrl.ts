@@ -2,8 +2,8 @@ import * as express from 'express';
 import * as database from '../models/post.model';
 import Controller from '../interfaces/controller.interface';
 import upload from '../middleware/upload';
-import  {authenticateToken,authenticateTokenInUrl} from '../middleware/auth';
-import * as iconvLite from 'iconv-lite'; 
+import { authenticateToken, authenticateTokenInUrl } from '../middleware/auth';
+import * as iconvLite from 'iconv-lite';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -18,9 +18,13 @@ class PostController implements Controller {
     private initializeRoutes() {
         // router.get('/:id/view', authenticateTokenInUrl,this.viewPost);
         // 특정 포스트 
-        this.router.get(`${this.path}/:id`, authenticateToken, this.getPost);
+        this.router.get(`${this.path}/:id`, this.getPost);
         // 논문 게시
-        this.router.post(`${this.path}/`, authenticateToken, upload.single('file'),this.uploadPost);
+        this.router.post(`${this.path}/`, authenticateToken, this.uploadPost);
+        // 논문 이미지 업로드 
+        this.router.post(`${this.path}/image`, authenticateToken, upload.single('file'), this.uploadPostImage);
+        // 논문 PDF 파일 업로드
+        this.router.post(`${this.path}/pdf`, authenticateToken, upload.single('file'), this.uploadPostPdf);
         // 논문 삭제
         this.router.delete(`${this.path}/:id`, authenticateToken, this.deletePost);
     }
@@ -28,12 +32,12 @@ class PostController implements Controller {
     private getPost = async (req, res, next) => {
         try {
             // Post 와 File 
-            const id = req.params.id;
-            if (isNaN(id)) return res.sendStatus(400);
-            const post = await database.getPostById(id);
+            const postId = req.params.id;
+            if (isNaN(postId)) return res.sendStatus(400);
+            const post = await database.getPostById(postId);
             if (!post) return res.status(404).json({ "message": "post not exist" })
-            await database.updateViews(id, req.user.id);
-            res.status(200).json({ post: post[0] });
+            await database.updateViews(postId);
+            res.status(200).json({ post });
         } catch (error) {
             next(error);
         };
@@ -41,39 +45,50 @@ class PostController implements Controller {
 
     private uploadPostImage = async (req, res, next) => {
         const file = req.file;
-        return;
-    }
+        if (!file) return res.status(400).json({ message: 'invalid image request' })
+        console.log(req.file.location);
+        return res.json({
+            url: req.file.location
+        });
+    }; 
 
-    private uploadPost = async(req, res, next) => {
-        const [file, title, content, category] = [req.file, req.body.title, req.body.content, req.body.category];
+    private uploadPostPdf = async (req, res, next) => {
+        const file = req.file;
+        const postId = req.body.postId;
+        if (!file || !postId) return res.status(400).json({ message: 'invalid image request' });
+        try{
+            console.log(file.originalname,file.key); 
+            if(file)
+            await database.uploadPdf(file.originalname,file.location,req.user.id,postId,file.key);
+            res.sendStatus(200);
+        } catch(error){
+            next(error); 
+        }
+    };
+
+    private uploadPost = async (req, res, next) => {
+        const { title, content, category,copyrightHolder } = req.body;
         // 타이틀이 주어지지 않은 경우 
-        if (!file || !title || !content || !category) return res.sendStatus(400);
+        console.log(content, title, category,copyrightHolder);
         try {
-            const ownerId = req.user.id;
-            // 포스트 아이디를 가져오기 위해
-            const postId = await database.uploadPost(title, content, ownerId, category);
-            // await connection.query(`
-            //     INSERT INTO File (filename, mimetype, url, owner_id, post_id,awsKey)
-            //     VALUES('${path.basename(file.originalname)}',                
-            //     '${file.mimetype}','${file.location}','${userId}','${post.insertId}','${file.key}');
-            // `);
-            // connection.commit();
-            // 로깅 구현 필요
-            // connection.release();
-            res.json({ postId });
+            if (!title || !content || !category || !copyrightHolder) return res.status(400).json({message: '제목 작성자 내용을 모두 입력해 주세요'});
+            if (req.user.authority == 'ADMINISTER' || req.user.authority == "ROOT") {
+                const postId = await database.uploadPost(req.user.id,copyrightHolder,title, content, category);
+                res.json({ postId });
+            }
         } catch (error) {
             next(error);
         }
     };
 
-    private deletePost = async(req, res, next) => {
+    private deletePost = async (req, res, next) => {
         try {
             const postId = req.params.id;
             // 게시글 번호가 없는 경우
             if (!postId) return res.sendStatus(403);
             // 게시글 번호로 소유자 찾기
             const ownerId = database.getPostOwnerByPostId(postId);
-            const hasAuthority = req.user.id == ownerId || req.user.authority == "ADMINISTRATOR";
+            const hasAuthority = req.user.id == ownerId || req.user.authority == "ROOT";
             // 권한이 없다면 403 forbidden
             if (!hasAuthority) return res.sendStatus(403);
             // 포스트 삭제
