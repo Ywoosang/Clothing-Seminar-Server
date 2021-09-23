@@ -1,6 +1,5 @@
 import * as express from 'express';
 import * as database from '../models/category.model';
-import { authenticateToken } from '../middleware/auth';
 import Controller from '../interfaces/controller.interface';
 
 class CategoryController implements Controller {
@@ -13,9 +12,9 @@ class CategoryController implements Controller {
 
     private initializeRoutes() {
         // 카테고리내 특정 페이지의 포스트 
-        this.router.get(`${this.path}/:category/:page`, authenticateToken, this.getCurrentPagePost);
+        this.router.get(`${this.path}/:category/:page`, this.getCurrentPagePost);
         // 카테고리 내 페이지 수
-        this.router.get(`${this.path}/:category/count`, authenticateToken, this.getNumberOfPages)
+        this.router.get(`${this.path}/:category/count`, this.getNumberOfPages)
     };
 
     private getNumberOfPages = async(req, res, next) => {
@@ -41,7 +40,7 @@ class CategoryController implements Controller {
             // 페이지 번호
             const pageNumber:string = req.params.page;
             // 전체 페이지
-            const startIndex:number = ( pageNumber - 1) * 13;
+            const startIndex:number = ( parseInt(pageNumber) - 1) * 13;
             const posts = await database.getPagePosts(category, startIndex);
             res.json({ posts });
         } catch (error) {
