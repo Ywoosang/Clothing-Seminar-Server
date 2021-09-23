@@ -1,6 +1,6 @@
 import * as express from 'express';
 import Controller from '../interfaces/controller.interface';
-import  {authenticateToken } from '../middleware/auth';
+import  {authenticateToken } from '../middleware/auth.middleware';
 
 // 로그인중인 사용자 불러오기
 class UserController implements Controller{
@@ -16,7 +16,6 @@ class UserController implements Controller{
     }
 
     private getUserInfo = (req, res) => {
-        console.log('실행완료')
         res.json({
             id: req.user.id,
             userId : req.user.userid,
