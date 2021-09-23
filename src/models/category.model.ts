@@ -11,7 +11,7 @@ export async function getCategoryTotalPostsNumber(category: string) {
 
 export async function getPagePosts(category: string, startIndex: number) {
     const [rows] = await connection.promise().query(`
-        SELECT P.title,P.id,P.created_at, U.username, F.filename, 
+        SELECT P.title,P.id,P.created_at,P.views, P.copyright_holder as username, F.filename, 
         F.id as fileId,P.category
         FROM Post P 
         LEFT JOIN User U ON U.id = P.owner_id
