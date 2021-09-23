@@ -12,6 +12,8 @@ export function authenticateToken(req,res,next){
     }); 
 }
 
+
+
 export function authenticateTokenInUrl(req,res,next){
     const token = req.query.token; 
     if(!token) return res.sendStatus(401);
