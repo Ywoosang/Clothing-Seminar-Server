@@ -9,6 +9,9 @@ DROP TABLE IF EXISTS Token;
 DROP TABLE IF EXISTS Category;
 DROP TABLE IF EXISTS User;
 
+SET GLOBAL time_zone='Asia/Seoul';
+set time_zone='Asia/Seoul';
+
 CREATE TABLE User(
     id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     username VARCHAR(10) NOT NULL,
@@ -38,6 +41,7 @@ CREATE TABLE Post(
     created_at DATETIME NOT NULL,
     updated_at DATETIME NULL,
     views INT(11) UNSIGNED NOT NULL DEFAULT 0,
+    copyright_holder VARCHAR(20) NOT NULL,
     owner_id INT(11) UNSIGNED NOT NULL,
     category VARCHAR(50) NOT NULL,
     FOREIGN KEY (owner_id) REFERENCES User(id) ON DELETE CASCADE,
@@ -48,29 +52,34 @@ CREATE TABLE Post(
 CREATE TABLE File(
     id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     filename VARCHAR(100) NOT NULL,
-    mimetype VARCHAR(20) NOT NULL,
     url VARCHAR(300) NOT NULL,
     owner_id INT(11) UNSIGNED NOT NULL,
     post_id INT(11) UNSIGNED NOT NULL, 
     awsKey VARCHAR(150) NOT NULL,
     FOREIGN KEY(owner_id) REFERENCES User(id) ON DELETE CASCADE,
     FOREIGN KEY(post_id) REFERENCES Post(id) ON DELETE CASCADE,
-    PRIMARY KEY(id) 
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE Comment(
     id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    copyright_holder VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
     created_at DATETIME NOT NULL,
-    owner_id INT(11) UNSIGNED NOT NULL,
     post_id INT(11) UNSIGNED NOT NULL,
-    FOREIGN KEY (owner_id) REFERENCES User(id) ON DELETE CASCADE,
+    password INT (20) UNSIGNED NOT NULL,
     FOREIGN KEY (post_id) REFERENCES Post(id) ON DELETE CASCADE,
     PRIMARY KEY(id)
 );
 
-INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자0','admin0','admin0@gmail.com','ADMINISTRATOR',123);
-INSERT INTO Category (title) VALUES ('복식사');
-INSERT INTO Category (title) VALUES ('복식미학 · 패션디자인');
-INSERT INTO Category (title) VALUES ('패션마케팅 · 심리');
-INSERT INTO Category (title) VALUES ('복식일반 의복구성 · 텍스타일');
+INSERT INTO User (username,userid,email,authority,password) VALUES ('윤우상','root','admin0@gmail.com','ROOT',123);
+INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자1','admin1','admin1@gmail.com','ADMINISTER',1234);
+INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자2','admin2','admin2@gmail.com','ADMINISTER',1234);
+INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자3','admin3','admin3@gmail.com','ADMINISTER',1234);
+INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자4','admin4','admin4@gmail.com','ADMINISTER',1234);
+INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자5','admin5','admin5@gmail.com','ADMINISTER',1234);
+
+INSERT INTO Category (title) VALUES ('History of Costume');
+INSERT INTO Category (title) VALUES ('Aesthetics · Fashion Design');
+INSERT INTO Category (title) VALUES ('Fashion Marketing · Psychology');
+INSERT INTO Category (title) VALUES ('Clothing Construction · Textiles · General Costume');
