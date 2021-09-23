@@ -44,7 +44,7 @@ export async function updateViews(postId: number) {
 }
 
 // 포스트 타이틀, 컨텐트
-export async function uploadPost( ownerId: number,copyrightHolder:string, title: string, content: string, category: string) {
+export async function uploadPost(ownerId: number, copyrightHolder: string, title: string, content: string, category: string) {
     const [post]: any = await connection.promise().query(`
         INSERT INTO Post (title,copyright_holder,content,created_at,updated_at,owner_id,category) 
         VALUES ('${title}','${copyrightHolder}','${content}',NOW(),NOW(),'${ownerId}','${category}');
@@ -53,16 +53,21 @@ export async function uploadPost( ownerId: number,copyrightHolder:string, title:
 }
 
 // pdf 업로드
-export async function uploadPdf(filename:string,url:string,ownerId:number,postId:number,awsKey:string) {
+export async function uploadPdf(filename: string, url: string, ownerId: number, postId: number, awsKey: string) {
     await connection.promise().query(`
     INSERT INTO File (filename,url,owner_id,post_id,awsKey) 
     VALUES ('${filename}','${url}','${ownerId}','${postId}','${awsKey}');
     `);
 }
 
-// 이미지 업로드
-export async function uploadImage() {
-
+// 논문 보기
+export async function getPdf(postId: number) {
+    const [file] = await connection.promise().query(`
+    SELECT id,awsKey,filename
+    FROM File 
+    WHERE post_id = ${postId};
+`);
+    return file[0];
 }
 
 export async function getPostOwnerByPostId(postId: number) {
