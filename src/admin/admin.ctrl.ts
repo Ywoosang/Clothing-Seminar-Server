@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as database from '../models/admin.model';
 import Controller from '../interfaces/controller.interface';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth.middleware';
 
 class AdminController implements Controller {
     public path = '/admin';
