@@ -5,7 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "NODE_ENV=test jest  --forceExit",
-    "dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only src/server.ts"
+    "dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only src/server.ts",
+    "production": "NODE_ENV=production ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "keywords": [],
   "author": "",
