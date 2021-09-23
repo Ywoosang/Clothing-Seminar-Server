@@ -67,6 +67,8 @@ class App {
             if (connection) {
                 console.log('Database connected'); 
                 return connection.release();
+            } else {
+                console.log('Database connection failed')
             }
         });
     }
