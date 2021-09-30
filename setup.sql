@@ -72,6 +72,15 @@ CREATE TABLE Comment(
     PRIMARY KEY(id)
 );
 
+CREATE TABLE Review(
+    id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
+    content TEXT NOT NULL,
+    password INT (20) UNSIGNED NOT NULL,
+    created_at DATETIME NOT NULL,
+    PRIMARY KEY(id)
+);
+
 INSERT INTO User (username,userid,email,authority,password) VALUES ('윤우상','root','admin0@gmail.com','ROOT',123);
 INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자1','admin1','admin1@gmail.com','ADMINISTER',1234);
 INSERT INTO User (username,userid,email,authority,password) VALUES ('관리자2','admin2','admin2@gmail.com','ADMINISTER',1234);

@@ -3,15 +3,18 @@ import * as express from 'express';
 import * as morgan from 'morgan';
 import * as dotenv from 'dotenv';
 import * as cors from 'cors';
+import * as hpp from 'hpp';
+import * as helmet from 'helmet';
 import errorMiddleware from './middleware/error.middleware';
 import pool from './db/connection'; 
+ 
 dotenv.config();  
 
 class App {
     public app: express.Application;
     public port: number;
      
-    constructor(controllers, port) {
+    constructor(controllers, port: number) {
         this.app = express();
         this.port = port;
         this.connectToDatabase();
@@ -22,14 +25,21 @@ class App {
      
     private initializeMiddlewares() {
         this.app.use(cors({
-            origin: ["http://localhost:8080"],
+            origin: ["http://localhost:8080","http://172.24.90.66:8080","http://clothing-seminar-client.s3-website.ap-northeast-2.amazonaws.com"],
             credentials: true,
             methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
             // exposedHeaders: ['Content-Disposition'] 
         }));
-        if (process.env.NODE_ENV !== 'test') {
-            this.app.use(morgan('dev'));
+        if(process.env.NODE_ENV === "production"){
+            this.app.use(morgan("combined"));
+            this.app.use(helmet({
+                contentSecurityPolicy: false
+            }));
+            this.app.use(hpp());
         }
+        else if (process.env.NODE_ENV === "development") {
+            this.app.use(morgan("dev"));
+        } 
         // parse application/json 파싱
         this.app.use(express.json());
         //  application/x-www-form-urlencoded 파싱
@@ -79,28 +89,5 @@ class App {
         });
     }
 }
-
-
-
-function loggerMiddleware(request: express.Request, response: express.Response, next) {
-    console.log(`${request.method} ${request.path}`);
-    next();
-}
-// app.set("etag", false);
-// dotenv
-dotenv.config();
-
-// mysql 세션 설정 
-// const sessionStore = new MySQLStore(dbconfig);
-
-// port 변수 설정 
-// app.set('port', process.env.PORT || 8080);
-// app.use('/api/admin', require('./api/admin'));
-// app.use('/api', require('./api/auth'));
-// app.use('/api/post', require('./api/post'));
-// app.use('/api/comment', require('./api/comment'));
-// app.use('/api/user', require('./api/user'));
-// app.use('/api/media', require('./api/media'));
-
 
 export default App;

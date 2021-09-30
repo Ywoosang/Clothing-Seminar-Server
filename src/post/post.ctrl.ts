@@ -72,10 +72,11 @@ class PostController implements Controller {
     private uploadPost = async (req, res, next) => {
         const { title, content, category, copyrightHolder } = req.body;
         // 타이틀이 주어지지 않은 경우 
-        console.log(content, title, category, copyrightHolder);
         try {
-            if (!title || !content || !category || !copyrightHolder) return res.status(400).json({ message: '제목 작성자 카테고리 내용을 모두 입력해 주세요' });
+            if (!title ||  !category || !copyrightHolder) return res.status(400).json({ message: '제목 작성자 카테고리 내용을 모두 입력해 주세요' });
+            console.log('컨텐츠',content);
             if (req.user.authority == 'ADMINISTER' || req.user.authority == "ROOT") {
+                console.log('컨텐츠',content);
                 const postId = await database.uploadPost(req.user.id, copyrightHolder, title, content, category);
                 res.json({ postId });
             }
