@@ -45,10 +45,8 @@ class ReviewController implements Controller {
             if(isNaN(password) || password.trim().length !== 4) return res.status(400).json({
                 message: "비밀번호는 4자리 숫자여야 합니다"
             })
-            await database.postReview(name,content,password.trim()); 
-            res.json({
-                message: '의견이 등록되었습니다'
-            })
+            const reviewId: number = await database.postReview(name,content,password.trim()); 
+            res.json({ reviewId });
         } catch(error) {
             next(error);
         }
