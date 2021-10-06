@@ -25,10 +25,7 @@ class App {
      
     private initializeMiddlewares() {
         this.app.use(cors({
-            origin: ["http://localhost:8080","http://172.24.90.66:8080","http://clothing-seminar-client.s3-website.ap-northeast-2.amazonaws.com"],
-            credentials: true,
             methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-            // exposedHeaders: ['Content-Disposition'] 
         }));
         if(process.env.NODE_ENV === "production"){
             this.app.use(morgan("combined"));

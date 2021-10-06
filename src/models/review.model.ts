@@ -5,7 +5,8 @@ import { Review } from '../review/review.interface';
 export async function getAllReviews(): Promise<Review[]>{
     const [rows]: any = await connection.promise().query(`
     SELECT id,name,content,created_at
-    FROM Review; 
+    FROM Review 
+    ORDER BY created_at DESC; 
     `); 
     return rows;
 }
