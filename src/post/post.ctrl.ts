@@ -34,7 +34,7 @@ class PostController implements Controller {
     private getPost = async (req, res, next) => {
         try {
             // Post 와 File 
-            const postId = req.params.id;
+            const postId:number = req.params.id;
             if (isNaN(postId)) return res.sendStatus(400);
             const post = await database.getPostById(postId);
             if (!post) return res.status(404).json({ "message": "post not exist" })
@@ -74,9 +74,7 @@ class PostController implements Controller {
         // 타이틀이 주어지지 않은 경우 
         try {
             if (!title ||  !category || !copyrightHolder) return res.status(400).json({ message: '제목 작성자 카테고리 내용을 모두 입력해 주세요' });
-            console.log('컨텐츠',content);
             if (req.user.authority == 'ADMINISTER' || req.user.authority == "ROOT") {
-                console.log('컨텐츠',content);
                 const postId = await database.uploadPost(req.user.id, copyrightHolder, title, content, category);
                 res.json({ postId });
             }
@@ -91,8 +89,7 @@ class PostController implements Controller {
             // 게시글 번호가 없는 경우
             if (!postId) return res.sendStatus(403);
             // 게시글 번호로 소유자 찾기
-            const ownerId = database.getPostOwnerByPostId(postId);
-            const hasAuthority = req.user.id == ownerId || req.user.authority == "ROOT" || req.user.authority == "ADMINISTER";
+            const hasAuthority =  req.user.authority == "ROOT" || req.user.authority == "ADMINISTER";
             // 권한이 없다면 403 forbidden
             if (!hasAuthority) return res.sendStatus(403);
             // 포스트 삭제
@@ -137,7 +134,6 @@ class PostController implements Controller {
             }).createReadStream();
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `inline; filename=${this.getPreviewFilename(req, filename)}`);
-
             f.pipe(res);
 
         } catch (err) {

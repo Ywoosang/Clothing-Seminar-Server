@@ -8,7 +8,6 @@ import UserController from './user/user.ctrl';
 import ReviewController from './review/review.ctrl'; 
 import * as dotenv from 'dotenv';
 dotenv.config();
-
  
 const app = new App(
   [
@@ -19,8 +18,6 @@ const app = new App(
     new AuthController(),
     new CommentController(),
     new ReviewController()
-  ],
-  process.env.POST as any || 3000, 
+  ]
 );
- 
 app.listen();

@@ -70,15 +70,6 @@ export async function getPdf(postId: number) {
     return file[0];
 }
 
-export async function getPostOwnerByPostId(postId: number) {
-    const [post] = await connection.promise().query(`
-    SELECT user_id as ownerId
-    FROM Post
-    WHERE id = ${postId};
-    `);
-    return post[0].ownerId;
-}
-
 export async function deletePostByPostId(postId: number) {
     await connection.promise().query(`
     DELETE FROM Post
