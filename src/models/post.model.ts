@@ -40,7 +40,7 @@ export async function updateViews(postId: number) {
         UPDATE Post 
         SET views = views + 1 
         WHERE id = ${postId};
-        `);
+    `);
 }
 
 // 포스트 타이틀, 컨텐트
@@ -55,23 +55,24 @@ export async function uploadPost(ownerId: number, copyrightHolder: string, title
 // pdf 업로드
 export async function uploadPdf(filename: string, url: string, ownerId: number, postId: number, awsKey: string) {
     await connection.promise().query(`
-    INSERT INTO File (filename,url,owner_id,post_id,awsKey) 
-    VALUES ('${filename}','${url}','${ownerId}','${postId}','${awsKey}');
+        INSERT INTO File (filename,url,owner_id,post_id,awsKey) 
+        VALUES ('${filename}','${url}','${ownerId}','${postId}','${awsKey}');
     `);
 }
 
 // 논문 보기
 export async function getPdf(postId: number) {
     const [file] = await connection.promise().query(`
-    SELECT id,awsKey,filename
-    FROM File 
-    WHERE post_id = ${postId};
-`);
+        SELECT id,awsKey,filename
+        FROM File 
+        WHERE post_id = ${postId};
+    `);
     return file[0];
 }
 
 export async function deletePostByPostId(postId: number) {
     await connection.promise().query(`
-    DELETE FROM Post
-    WHERE id = ${postId}`);
+        DELETE FROM Post
+        WHERE id = ${postId}
+    `);
 }
