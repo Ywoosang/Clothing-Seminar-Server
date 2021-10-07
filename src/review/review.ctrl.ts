@@ -19,7 +19,9 @@ class ReviewController implements Controller {
         // 회고 작성
         this.router.post(`${this.path}`, this.postReview);
         // 회고 삭제
-        this.router.delete(`${this.path}`, this.deleteReview);
+        this.router.delete(`${this.path}/admin`, this.deleteReviewByAdminRole)
+        // 회고 삭제
+        this.router.delete(`${this.path}`, this.deleteReviewByPassword);
     }
 
     private getReviews = async (req, res, next) => {
@@ -52,12 +54,25 @@ class ReviewController implements Controller {
         }
     }
     
+    private deleteReviewByAdminRole = async(req,res,next) => {
+        try {
+            // 비밀번호, 포스트 아이디
+            const { reviewId }  = req.body;
+            if(!reviewId) return res.sendStatus(403);
+            // 서버에서 검증
+            await database.deleteReview(reviewId);
+                res.json({
+                    message: '의견을 삭제했습니다'
+                })
+          } catch (error) {
+              next(error); 
+          }
+    }
 
-    private deleteReview = async (req,res,next) => {
+    private deleteReviewByPassword = async (req,res,next) => {
         try {
           // 비밀번호, 포스트 아이디
           const { password, reviewId }  = req.body;
-          console.log(password,reviewId)
           if(!password || !reviewId) return res.sendStatus(403);
           // 서버에서 검증
           const reviewPassword: number = await database.getReviewPassword(reviewId);
