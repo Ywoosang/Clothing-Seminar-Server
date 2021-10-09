@@ -1,13 +1,14 @@
 import * as express from 'express';
-import * as database from '../models/comment.model';
 import Controller from '../interfaces/controller.interface';
 import { authenticateToken } from '../middleware/auth.middleware'; 
 
 class CommentController implements Controller {
     public path = '/comment';
     public router = express.Router();
+    private database : any;
 
-    constructor() {
+    constructor(database: any) {
+        this.database = database; 
         this.initializeRoutes();
     }
 
@@ -28,7 +29,7 @@ class CommentController implements Controller {
             if (!copyrightHolder || !content || !password) return res.status(400).json({ message: '(*) 항목을 모두 입력해 주세요' })
             // 바이트수 계산
             const postId = req.params.postId;
-            await database.registerComment(content, copyrightHolder, postId, password);
+            await this.database.registerComment(content, copyrightHolder, postId, password);
             res.sendStatus(200);
         } catch (error) {
             next(error);
@@ -41,7 +42,7 @@ class CommentController implements Controller {
             if (!postId) return res.sendStatus(403);
             // 관리자 권한을 허용하기 위해
 
-            const comments = await database.getCommentsByPostId(postId)
+            const comments = await this.database.getCommentsByPostId(postId)
             // 관리자 라면 삭제 승인
             return res.json({ comments });
         } catch (error) {
@@ -55,7 +56,7 @@ class CommentController implements Controller {
         if (!commentId) return res.sendStatus(403);
         // 삭제 권한 있는지 확인 요망
         try {
-            await database.deleteComment(commentId);
+            await this.database.deleteComment(commentId);
             return res.sendStatus(200);
             // 삭제 성공 시
         } catch (error) {
@@ -72,10 +73,10 @@ class CommentController implements Controller {
         try {
             // 관리자 권한으로 삭제하는 경우
             console.log(clientPassword);
-            const password = await database.getCommentPasswordByCommentId(commentId);
+            const password = await this.database.getCommentPasswordByCommentId(commentId);
             console.log(password);
             if (password == clientPassword) {
-                await database.deleteComment(commentId);
+                await this.database.deleteComment(commentId);
                 return res.sendStatus(200);
             } else {
                 return res.status(401).json({message: '비밀번호가 일치하지 않습니다'})

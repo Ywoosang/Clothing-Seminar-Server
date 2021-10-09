@@ -6,18 +6,20 @@ import AuthController from './auth/auth.ctrl';
 import CommentController from './comment/comment.ctrl';
 import UserController from './user/user.ctrl'; 
 import ReviewController from './review/review.ctrl'; 
+import database from './models';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
  
 const app = new App(
   [
     new UserController(),
-    new PostsController(),
-    new AdminController(),
-    new CategoryController(),
-    new AuthController(),
-    new CommentController(),
-    new ReviewController()
+    new PostsController(database),
+    new AdminController(database),
+    new CategoryController(database),
+    new AuthController(database),
+    new CommentController(database),
+    new ReviewController(database)
   ]
 );
 app.listen();

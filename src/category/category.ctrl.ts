@@ -1,12 +1,13 @@
 import * as express from 'express';
-import * as database from '../models/category.model';
 import Controller from '../interfaces/controller.interface';
 
 class CategoryController implements Controller {
     public path = '/category';
     public router = express.Router();
+    private database: any;
 
-    constructor() {
+    constructor(database: any) {
+        this.database = database;
         this.initializeRoutes();
     }
 
@@ -21,7 +22,7 @@ class CategoryController implements Controller {
         try {
             const category = req.params.category;
             // 올바른 카테고리가 들어왔는지 검사
-            const numberOfPosts = await database.getCategoryTotalPostsNumber(category);
+            const numberOfPosts = await this.database.getCategoryTotalPostsNumber(category);
             // 한 페이지에 13 개씩 렌더링
             const tmp = numberOfPosts / 13;
             let numberOfPages = tmp !== Math.floor(tmp) ? Math.floor(tmp) + 1 : Math.floor(tmp);
@@ -41,7 +42,7 @@ class CategoryController implements Controller {
             const pageNumber:string = req.params.page;
             // 전체 페이지
             const startIndex:number = ( parseInt(pageNumber) - 1) * 13;
-            const posts = await database.getPagePosts(category, startIndex);
+            const posts = await this.database.getPagePosts(category, startIndex);
             res.json({ posts });
         } catch (error) {
             next(error);

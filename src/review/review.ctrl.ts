@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as database from '../models/review.model';
 import Controller from '../interfaces/controller.interface';
 import { Review } from './review.interface';
 import * as dotenv from 'dotenv';
@@ -8,8 +7,10 @@ dotenv.config();
 class ReviewController implements Controller {
     public path = '/review';
     public router = express.Router();
+    private database: any;
 
-    constructor() {
+    constructor(database: any) {
+        this.database = database;
         this.initializeRoutes();
     }
 
@@ -27,7 +28,7 @@ class ReviewController implements Controller {
     private getReviews = async (req, res, next) => {
         try {
             // Post 와 File
-            const reviews: Review[] = await database.getAllReviews();
+            const reviews: Review[] = await this.database.getAllReviews();
             return res.json({
                 reviews
             });
@@ -47,7 +48,7 @@ class ReviewController implements Controller {
             if(isNaN(password) || password.trim().length !== 4) return res.status(400).json({
                 message: "비밀번호는 4자리 숫자여야 합니다"
             })
-            const reviewId: number = await database.postReview(name,content,password.trim()); 
+            const reviewId: number = await this.database.postReview(name,content,password.trim()); 
             res.json({ reviewId });
         } catch(error) {
             next(error);
@@ -60,7 +61,7 @@ class ReviewController implements Controller {
             const { reviewId }  = req.body;
             if(!reviewId) return res.sendStatus(403);
             // 서버에서 검증
-            await database.deleteReview(reviewId);
+            await this.database.deleteReview(reviewId);
                 res.json({
                     message: '의견을 삭제했습니다'
                 })
@@ -75,9 +76,9 @@ class ReviewController implements Controller {
           const { password, reviewId }  = req.body;
           if(!password || !reviewId) return res.sendStatus(403);
           // 서버에서 검증
-          const reviewPassword: number = await database.getReviewPassword(reviewId);
+          const reviewPassword: number = await this.database.getReviewPassword(reviewId);
           if(reviewPassword == password){
-              await database.deleteReview(reviewId);
+              await this.database.deleteReview(reviewId);
               res.json({
                   message: '의견을 삭제했습니다'
               })

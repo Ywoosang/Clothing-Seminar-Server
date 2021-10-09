@@ -13,7 +13,7 @@ class App {
     public app: express.Application;
     public port: number | string;
 
-    constructor(controllers,) {
+    constructor(controllers) {
         this.app = express();
         this.port =   process.env.PORT || 3000;
         this.connectToDatabase();

@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as database from '../models/post.model';
 import Controller from '../interfaces/controller.interface';
 import upload from '../middleware/upload.middleware';
 import { authenticateToken } from '../middleware/auth.middleware';
@@ -11,8 +10,10 @@ dotenv.config();
 class PostController implements Controller {
     public path = '/post';
     public router = express.Router();
+    private database: any;
 
-    constructor() {
+    constructor(database: any) {
+        this.database = database;
         this.initializeRoutes();
     }
 
@@ -36,9 +37,9 @@ class PostController implements Controller {
             // Post 와 File 
             const postId:number = req.params.id;
             if (isNaN(postId)) return res.sendStatus(400);
-            const post = await database.getPostById(postId);
+            const post = await this.database.getPostById(postId);
             if (!post) return res.status(404).json({ "message": "post not exist" })
-            await database.updateViews(postId);
+            await this.database.updateViews(postId);
             res.status(200).json({ post });
         } catch (error) {
             next(error);
@@ -61,7 +62,7 @@ class PostController implements Controller {
         try {
             console.log(file.originalname, file.key);
             if (file){
-               await database.uploadPdf(file.originalname, file.location, req.user.id, postId, file.key);
+               await this.database.uploadPdf(file.originalname, file.location, req.user.id, postId, file.key);
             }
             res.sendStatus(200);
         } catch (error) {
@@ -75,7 +76,7 @@ class PostController implements Controller {
         try {
             if (!title ||  !category || !copyrightHolder) return res.status(400).json({ message: '제목 작성자 카테고리 내용을 모두 입력해 주세요' });
             if (req.user.authority == 'ADMINISTER' || req.user.authority == "ROOT") {
-                const postId = await database.uploadPost(req.user.id, copyrightHolder, title, content, category);
+                const postId = await this.database.uploadPost(req.user.id, copyrightHolder, title, content, category);
                 res.json({ postId });
             }
         } catch (error) {
@@ -93,7 +94,7 @@ class PostController implements Controller {
             // 권한이 없다면 403 forbidden
             if (!hasAuthority) return res.sendStatus(403);
             // 포스트 삭제
-            await database.deletePostByPostId(postId);
+            await this.database.deletePostByPostId(postId);
             return res.sendStatus(200);
         } catch (error) {
             next(error);
@@ -117,7 +118,7 @@ class PostController implements Controller {
     private viewPost = async (req, res, next) => {
         try {
             const postId = req.params.id;
-            const file = await database.getPdf(postId);
+            const file = await this.database.getPdf(postId);
             console.log(file);
             const { filename, awsKey } = file;
             // 버킷의 데이터를 읽어온다. 
