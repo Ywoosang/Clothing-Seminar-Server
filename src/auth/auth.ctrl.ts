@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import * as express from 'express';
 import { authenticateToken, generateAccessToken } from '../middleware/auth.middleware';
 import Controller from '../interfaces/controller.interface';
-
+import { User } from './auth.interface'; 
 
 class AuthController implements Controller {
     public path = '/auth';
@@ -65,7 +65,7 @@ class AuthController implements Controller {
                 message: this.generateErrorMessage()
             });
             // 사용자 아이디 기반으로 찾기
-            const user = await this.database.getUserInfoByUserId(userId)
+            const user: User = await this.database.getUserInfoByUserId(userId);
             //  해당 아이디의 사용자가 존재하지 않다면
             if (!user) return res.status(400).json({
                 message: '해당 아이디의 관리자가 존재하지 않습니다'

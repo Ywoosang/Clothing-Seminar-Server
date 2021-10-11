@@ -33,7 +33,7 @@ class App {
                 contentSecurityPolicy: false
             }));
             this.app.use(hpp());
-        } else if (process.env.NODE_ENV === "development") {
+        } else if(process.env.NODE_ENV === "development") {
             this.app.use(cors());
             this.app.use(morgan("dev"));
         }
@@ -87,6 +87,10 @@ class App {
                 <p>https://www.kscic.co.kr</p>
             `)
         })
+    }
+
+    public getServer() {
+        return this.app;
     }
 
     public listen() {

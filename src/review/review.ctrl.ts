@@ -43,10 +43,12 @@ class ReviewController implements Controller {
             if(!name || !content || !password) return res.status(400).json({
                 message: "정보를 모두 입력해 주세요"
             });
-            console.log(typeof password.trim());
             // isNaN 은 문자형 숫자도 숫자로 인식 
-            if(isNaN(password) || password.trim().length !== 4) return res.status(400).json({
-                message: "비밀번호는 4자리 숫자여야 합니다"
+            if(isNaN(password)) return res.status(400).json({
+                message: "비밀번호는 숫자여야 합니다"
+            })
+            if(password.trim().length !== 4) return res.status(400).json({
+                message: "비밀번호는 4자리여야 합니다"
             })
             const reviewId: number = await this.database.postReview(name,content,password.trim()); 
             res.json({ reviewId });
@@ -81,11 +83,11 @@ class ReviewController implements Controller {
               await this.database.deleteReview(reviewId);
               res.json({
                   message: '의견을 삭제했습니다'
-              })
+              }); 
           }else{
               res.status(401).json({
                   message: '비밀번호가 올바르지 않습니다'                  
-              })
+              }); 
           }
         } catch (error) {
             next(error); 
