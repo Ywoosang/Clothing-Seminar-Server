@@ -1,9 +1,4 @@
 node_modules/
-package-lock.json
-credentials.js
-config.json 
-video/
+db_volume/
 .env
-src/media
 dist/
- 
