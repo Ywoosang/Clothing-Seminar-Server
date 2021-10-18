@@ -12,10 +12,10 @@ class CategoryController implements Controller {
     }
 
     private initializeRoutes() {
-        // 카테고리내 특정 페이지의 포스트 
-        this.router.get(`${this.path}/:category/:page`, this.getCurrentPagePost);
         // 카테고리 내 페이지 수
         this.router.get(`${this.path}/:category/count`, this.getNumberOfPages)
+        // 카테고리내 특정 페이지의 포스트 
+        this.router.get(`${this.path}/:category/:page`, this.getCurrentPagePost);        
     };
 
     private getNumberOfPages = async(req, res, next) => {
