@@ -1,7 +1,7 @@
-import App from '../app';
+import App from '../src/app';
 import * as request from 'supertest';
-import AuthController from '../auth/auth.ctrl';
-import { User } from '../auth/auth.interface';
+import AuthController from '../src/auth/auth.ctrl';
+import { User } from '../src/auth/auth.interface';
 import { jest } from '@jest/globals'; 
 
 const users: User[] = [
@@ -60,6 +60,7 @@ describe('GET /api/auth/login 은', () => {
         });
         test('200 응답코드로 응답한다', () => {
             expect(response.status).toBe(200); 
+
         });
 
         test('JSON 오브젝트로 응답한다',() => {
