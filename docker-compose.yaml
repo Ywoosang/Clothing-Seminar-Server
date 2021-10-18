@@ -1,0 +1,67 @@
+version: '3.7'
+services:
+  # server:
+  #   build:
+  #     context : .
+  #     dockerfile: Dockerfile.dev
+  #   container_name: kscic-app
+  #   env_file: ./.env
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - database
+  #   networks: 
+  #     - kscic_net 
+  #   environment:
+  #     - COOKIE_SECRET=$COOKIE_SECRET
+  #     - DATABASE_HOST=$DATABASE_HOST
+  #     - DATABASE_PASSWORD=$MYSQL_ROOT_PASSWORD
+  #     - PORT=$PORT
+  #     - ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET
+  #     - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+  #     - AWS_SECRET_KEY_ID=$AWS_SECRET_KEY_ID
+  #   volumes:
+  #     - ./src:/usr/server/src
+  # database:
+  #   image: mysql:8.0
+  #   container_name: kscic-db
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+  #   restart: always
+  #   ports:
+  #     - 3306:3306
+  #   networks: 
+  #     - kscic_net
+  #   volumes:
+  #     - ./my.cnf:/etc/mysql/conf.d/my.cnf
+  #     - ./db_volume:/var/lib/mysql
+  #     - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+  #   cap_add:
+  #     - SYS_NICE
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: kscic-test
+    # depends_on:
+    #   - database
+    #   - server
+    env_file: ./.env
+    volumes:
+      - ./src:/usr/server/src
+      - ./tests:/usr/server/tests
+    environment:
+      - COOKIE_SECRET=$COOKIE_SECRET
+      - DATABASE_HOST=$DATABASE_HOST
+      - DATABASE_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - PORT=$PORT
+      - ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET
+      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+      - AWS_SECRET_KEY_ID=$AWS_SECRET_KEY_ID
+    command: ["npm","run","test"]
+
+# networks: 
+#   kscic_net:
+
+# volumes:
+#   kicic_volume:
