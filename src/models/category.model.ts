@@ -17,8 +17,8 @@ export async function getPagePosts(category: string, startIndex: number) {
         LEFT JOIN User U ON U.id = P.owner_id
         LEFT JOIN File F ON F.post_id = P.id
         WHERE P.category = '${category}'
-        ORDER BY created_at ASC 
-        LIMIT ${0},13;
+        ORDER BY created_at DESC 
+        LIMIT ${startIndex},13;
         `);
     return rows;
 };
