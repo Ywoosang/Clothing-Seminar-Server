@@ -2,17 +2,8 @@ import * as dotenv from 'dotenv';
 dotenv.config(); 
 
 export default {
-   test: {
-        host: "localhost",
-        user: "root",
-        port:3306,
-        password: "db11",
-        database : "ClothingTestDB",
-        connectionLimit: 5000,
-        dateStrings: "date"
-    }, 
     development : {
-        host: "localhost",
+        host: process.env.DATABASE_HOST || "localhost",
         user: "root",
         port:3306,
         password: "db11",
