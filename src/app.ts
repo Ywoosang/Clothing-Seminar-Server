@@ -16,8 +16,10 @@ class App {
     constructor(controllers) {
         this.app = express();
         this.port =   process.env.PORT || 3000;
-        this.connectToDatabase();
-        this.setDefaultPathResponse();
+        if(process.env.NODE_ENV !== "test"){
+            this.connectToDatabase();
+            this.setDefaultPathResponse();
+        }   
         this.initializeMiddlewares();
         this.initializeControllers(controllers);
         this.initializeErrorHandling();
@@ -80,13 +82,7 @@ class App {
     }
 
     private setDefaultPathResponse(){
-        this.app.get('/',(req,res)=>{
-            return res.send(`
-                <h1>This is an API server</h1>
-                <p>ckick the link below</p>
-                <p>https://www.kscic.co.kr</p>
-            `)
-        })
+        this.app.get('/',(req,res)=>res.send('<h1>학회 API 서버 입니다</h1>'))
     }
 
     public getServer() {
