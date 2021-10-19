@@ -5,8 +5,9 @@
   "main": "server.ts",
   "scripts": {
     "test": "NODE_ENV=test jest --watchAll",
+    "test:local": "NODE_ENV=test jest",
     "dev": "NODE_ENV=development nodemon src/server.ts",
-    "build": "tsc -p .",
+    "build": "tsc -p tsconfig-build.json",
     "start": "NODE_ENV=production node dist/server.js",
     "production": "NODE_ENV=production pm2 start dist/server.js"
   },
