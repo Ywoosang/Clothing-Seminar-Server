@@ -4,28 +4,29 @@ import AuthController from '../src/auth/auth.ctrl';
 import { User } from '../src/auth/auth.interface';
 import { jest } from '@jest/globals'; 
 
-const users: User[] = [
-    {
-        id: 1,
-        userid: 'test1',
-        password: 'test1234',
-        username: '관리자',
-        email: 'example@gmail.com',
-        authority: 'ROOT'
-    },
-    {
-        id: 2,
-        userid: 'test2',
-        password: 'test1234',
-        username: '관리자',
-        email: 'example@gmail.com',
-        authority: 'ADMINISTER'
-    }
-];
 
 const getUserInfoByUserId = jest.fn(async (userId: string) => {
-        return users.filter(user => user.userid == userId)[0];
-    });
+    // 존재하는 유저 목록 가정
+    const users: User[] = [
+        {
+            id: 1,
+            userid: 'test1',
+            password: 'test1234',
+            username: '관리자',
+            email: 'example@gmail.com',
+            authority: 'ROOT'
+        },
+        {
+            id: 2,
+            userid: 'test2',
+            password: 'test1234',
+            username: '관리자',
+            email: 'example@gmail.com',
+            authority: 'ADMINISTER'
+        }
+    ]; 
+    return users.filter(user => user.userid == userId)[0];
+});
 
 const mockFunctions = {
     getUserInfoByUserId
@@ -48,13 +49,13 @@ describe('GET /api/auth/login 은', () => {
             expect(getUserInfoByUserId.mock.calls.length).toBe(1);
             expect(getUserInfoByUserId.mock.calls[0][0]).toBe('test1');
         });
-    })
+    }); 
 
     describe('로그인 성공시', () => {
         let response;
         beforeAll(async () => {
             response = await request(app.getServer()).post('/api/auth/login').send({
-                userId: 'test2',
+                userId: 'test1',
                 password: 'test1234'
             })
         });
