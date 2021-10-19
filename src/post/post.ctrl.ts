@@ -135,7 +135,7 @@ class PostController implements Controller {
             }).createReadStream();
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `inline; filename=${this.getPreviewFilename(req, filename)}`);
-            f.pipe(res);
+            return f.pipe(res);
 
         } catch (err) {
             next(err);

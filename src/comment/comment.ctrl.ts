@@ -19,7 +19,7 @@ class CommentController implements Controller {
         this.router.get(`${this.path}/:postId`, this.getComments);
         // 관리자가 아닌 일반 사용자가 댓글 비밀번호로 댓글 삭제
         this.router.delete(`${this.path}/user/:commentId`, this.deleteCommentByPassword);
-        // 관리자 역할로 댓글 삭제   
+        // 관리자 역할로 댓글 삭제
         this.router.delete(`${this.path}/admin/:commentId`,authenticateToken, this.deleteCommentByAdmin);
     }
 
@@ -41,7 +41,6 @@ class CommentController implements Controller {
             const postId = req.params.postId;
             if (!postId) return res.sendStatus(403);
             // 관리자 권한을 허용하기 위해
-
             const comments = await this.database.getCommentsByPostId(postId)
             // 관리자 라면 삭제 승인
             return res.json({ comments });

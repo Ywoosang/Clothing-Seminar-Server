@@ -47,10 +47,10 @@ class ReviewController implements Controller {
             if(isNaN(password)) return res.status(400).json({
                 message: "비밀번호는 숫자여야 합니다"
             })
-            if(password.trim().length !== 4) return res.status(400).json({
+            if(password.toString().length !== 4) return res.status(400).json({
                 message: "비밀번호는 4자리여야 합니다"
             })
-            const reviewId: number = await this.database.postReview(name,content,password.trim()); 
+            const reviewId: number = await this.database.postReview(name,content,password); 
             res.json({ reviewId });
         } catch(error) {
             next(error);
@@ -74,7 +74,7 @@ class ReviewController implements Controller {
 
     private deleteReviewByPassword = async (req,res,next) => {
         try {
-          // 비밀번호, 포스트 아이디
+          // 비밀번호, 리뷰 아이디
           const { password, reviewId }  = req.body;
           if(!password || !reviewId) return res.sendStatus(403);
           // 서버에서 검증
