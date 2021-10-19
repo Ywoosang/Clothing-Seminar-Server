@@ -1,0 +1,20 @@
+# 관리자 권한을 부여한다. 
+sudo: required
+
+# 사용할 언어(플랫폼) 을 선택하는데 여기에서는 generic 으로
+language: generic
+
+# 도커 환경이므로 services 를 docker 로 한다
+services: 
+  - docker
+
+# 스크립트를 실행하기 전에 해줘야 할 것들을 여기에 정의한다
+before_install:
+  - echo "도커 파일을 이용해 이미지 생성"
+  - docker build -f Dockerfile.travis.test -t test:v1 .
+
+script:
+  - docker run -e CI=true test:v1 npm run test -- --coverage
+
+after_success:
+  - echo "테스트가 성공했습니다"

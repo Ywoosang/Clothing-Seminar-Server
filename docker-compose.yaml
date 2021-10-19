@@ -52,7 +52,7 @@ services:
     environment:
       - PORT=$PORT
       - ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET
-    command: ["npm","run","test"]
+    command: ["npm","run","test:watch"]
 
 networks: 
   kscic_net:
