@@ -1,13 +1,5 @@
 import connection from '../db/connection';
 
-
-export async function registerComment(content: string, copyrightHolder: string, postId: number, password: number) {
-    await connection.promise().query(`
-    INSERT INTO Comment (content,created_at,copyright_holder,post_id,password) 
-    VALUES ('${content}',NOW(),'${copyrightHolder}','${postId}','${password}');
-    `);
-}
-
 export async function getCommentsByPostId(postId: number) {
     const [comments] = await connection.promise().query(`
     SELECT C.id, C.content, C.created_at,
@@ -25,6 +17,13 @@ export async function getCommentPasswordByCommentId(commentId: number) {
     WHERE id = ${commentId};
     `);
     return rows[0].password;
+}
+
+export async function postComment(content: string, copyrightHolder: string, postId: number, password: number) {
+    await connection.promise().query(`
+    INSERT INTO Comment (content,created_at,copyright_holder,post_id,password) 
+    VALUES ('${content}',NOW(),'${copyrightHolder}','${postId}','${password}');
+    `);
 }
 
 export async function deleteComment(commentId: number) {

@@ -3,6 +3,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['./dist/'],
-  verbose: true,
+ detectOpenHandles:true,
+ verbose: true
   // resetMocks: true
 };

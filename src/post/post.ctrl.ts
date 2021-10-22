@@ -5,6 +5,7 @@ import { authenticateToken } from '../middleware/auth.middleware';
 import * as iconvLite from 'iconv-lite';
 import * as dotenv from 'dotenv';
 import AWS from '../config/aws';
+import Post from './post.interface';
 dotenv.config();
 
 class PostController implements Controller {
@@ -37,7 +38,7 @@ class PostController implements Controller {
             // Post 와 File 
             const postId:number = req.params.id;
             if (isNaN(postId)) return res.sendStatus(400);
-            const post = await this.database.getPostById(postId);
+            const post: Post = await this.database.getPostById(postId);
             if (!post) return res.status(404).json({ "message": "post not exist" })
             await this.database.updateViews(postId);
             res.status(200).json({ post });
@@ -141,7 +142,6 @@ class PostController implements Controller {
             next(err);
         }
     };
-
 }
 
 export default PostController;
