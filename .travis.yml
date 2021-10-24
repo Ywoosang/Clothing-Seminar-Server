@@ -13,7 +13,7 @@ services:
 
 before_install:
   - echo "docker build start"
-  - cat .env.example | envsub > .env
+  - cat .env.example | envsubst > .env
   - docker build -f Dockerfile.travis.test -t test:v1 .
 
 script:
