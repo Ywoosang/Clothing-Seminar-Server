@@ -1,8 +1,8 @@
-import connection from '../db/connection'; 
+import connection from '../database/connection'; 
 
 
 class CategoryDao{
-    static async getCategoryTotalPostsNumber(category: string) {
+    public static async getCategoryTotalPostsNumber(category: string) {
         const [rows] = await connection.promise().query(`
             SELECT COUNT(*) as count
             FROM Post 
@@ -11,7 +11,7 @@ class CategoryDao{
         return rows[0].count;
     };
     
-    static async getPagePosts(category: string, startIndex: number) {
+    public static async getPagePosts(category: string, startIndex: number) {
         const [rows] = await connection.promise().query(`
             SELECT P.title,P.id,P.created_at,P.views, P.copyright_holder as username, F.filename, 
             F.id as fileId,P.category

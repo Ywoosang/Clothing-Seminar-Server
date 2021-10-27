@@ -1,9 +1,9 @@
-import connection from '../db/connection';
+import connection from '../database/connection';
 
 
 class PostDao{
     // 특정 카테고리 포스트 개수 조회
-    static async getCategoryTotalPostsNumber(category: string) {
+    public static async getCategoryTotalPostsNumber(category: string) {
         const [rows] = await connection.promise().query(`
             SELECT COUNT(*) as count
             FROM Post 
@@ -13,7 +13,7 @@ class PostDao{
     }
     
     // 해당 페이지 포스트 조회
-    static async getPagePosts(category: string, startIndex: number) {
+    public static async getPagePosts(category: string, startIndex: number) {
         const [rows] = await connection.promise().query(`
             SELECT P.title,P.id,P.created_at, P.category, P.copyright_holder as username
             F.filename, F.id as fileId
@@ -27,7 +27,7 @@ class PostDao{
     }
     
     // 포스트 아이디로 포스트 조회
-    static async getPostById(id: number) {
+    public static async getPostById(id: number) {
         const [post] = await connection.promise().query(`
             SELECT P.title,P.content,P.created_at,P.updated_at,P.views,
             P.copyright_holder as username,U.userid,
@@ -41,7 +41,7 @@ class PostDao{
     }
     
     // 조회수 증가
-    static async updateViews(postId: number) {
+    public static async updateViews(postId: number) {
         await connection.promise().query(`
             UPDATE Post 
             SET views = views + 1 
@@ -50,7 +50,7 @@ class PostDao{
     }
     
     // 포스트 타이틀, 컨텐트
-    static async uploadPost(ownerId: number, copyrightHolder: string, title: string, content: string, category: string) {
+    public static async uploadPost(ownerId: number, copyrightHolder: string, title: string, content: string, category: string) {
         const [post]: any = await connection.promise().query(`
             INSERT INTO Post (title,copyright_holder,content,created_at,updated_at,owner_id,category) 
             VALUES ('${title}','${copyrightHolder}','${content}',NOW(),NOW(),'${ownerId}','${category}');
@@ -59,7 +59,7 @@ class PostDao{
     }
     
     // pdf 업로드
-    static async uploadPdf(filename: string, url: string, ownerId: number, postId: number, awsKey: string) {
+    public static async uploadPdf(filename: string, url: string, ownerId: number, postId: number, awsKey: string) {
         await connection.promise().query(`
             INSERT INTO File (filename,url,owner_id,post_id,awsKey) 
             VALUES ('${filename}','${url}','${ownerId}','${postId}','${awsKey}');
@@ -67,7 +67,7 @@ class PostDao{
     }
     
     // 논문 보기
-    static async getPdf(postId: number) {
+    public static async getPdf(postId: number) {
         const [file] = await connection.promise().query(`
             SELECT id,awsKey,filename
             FROM File 
@@ -77,7 +77,7 @@ class PostDao{
     }
     
     // 포스트 삭제
-    static async deletePostByPostId(postId: number) {
+    public static async deletePostByPostId(postId: number) {
         await connection.promise().query(`
             DELETE FROM Post
             WHERE id = ${postId}

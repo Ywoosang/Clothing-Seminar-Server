@@ -1,4 +1,4 @@
-import connection from '../db/connection';
+import connection from '../database/connection';
 
 class AdminDao{
     public static async getAllUsers(){

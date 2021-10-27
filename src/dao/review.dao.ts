@@ -1,4 +1,4 @@
-import connection from '../db/connection';
+import connection from '../database/connection';
 import { Review } from '../review/review.interface';
 
 class ReviewDao {
@@ -19,6 +19,7 @@ class ReviewDao {
         `);
         return rows[0].password;
     };
+    
     public static async postReview(name: string, content: string, password: number): Promise<number> {
         const [review]: any = await connection.promise().query(`
             INSERT INTO Review (name,content,password,created_at) 
